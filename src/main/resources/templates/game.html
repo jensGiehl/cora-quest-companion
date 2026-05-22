@@ -240,9 +240,10 @@
     };
 
     const CARD_TYPE_ICONS = {
-        ITEM: {cls: 'bi-bag-fill', color: 'text-primary'},
+        TREASURE: {cls: 'bi-box', color: 'text-primary'},
         SPECIAL_ITEM: {cls: 'bi-gem', color: 'text-danger'},
-        LEVEL_CARD: {cls: 'bi-trophy-fill', color: 'text-warning'}
+        LEVEL_CARD: {cls: 'bi-trophy-fill', color: 'text-warning'},
+        START_ITEM: {cls: 'bi-shield-fill', color: 'text-secondary'}
     };
 
     function iconHtml(source) {
@@ -299,14 +300,23 @@
 
     async function loadQuests() {
         allQuests = await api('/api/quests');
+        if (allQuests) {
+            allQuests.sort((a, b) => a.name.localeCompare(b.name));
+        }
     }
 
     async function loadCharacters() {
         allCharacters = await api('/api/characters');
+        if (allCharacters) {
+            allCharacters.sort((a, b) => a.name.localeCompare(b.name));
+        }
     }
 
     async function loadCards() {
         allCards = await api('/api/cards');
+        if (allCards) {
+            allCards.sort((a, b) => a.name.localeCompare(b.name));
+        }
     }
 
     async function loadCurseOptions() {
@@ -703,9 +713,9 @@
 
     // --- BGG Summary ---
 
-    const CARD_TYPE_LABELS = {ITEM: 'Item', SPECIAL_ITEM: 'Special Item', LEVEL_CARD: 'Level Card'};
-    const CARD_TYPE_ORDER = {ITEM: 0, SPECIAL_ITEM: 1, LEVEL_CARD: 2};
-    const CARD_TYPE_COLORS = {ITEM: '#27ae60', SPECIAL_ITEM: '#2980b9', LEVEL_CARD: '#b8860b'};
+    const CARD_TYPE_LABELS = {TREASURE: 'Treasure', SPECIAL_ITEM: 'Special Item', LEVEL_CARD: 'Level Card', START_ITEM: 'Start Item'};
+    const CARD_TYPE_ORDER = {START_ITEM: 0, TREASURE: 1, SPECIAL_ITEM: 2, LEVEL_CARD: 3};
+    const CARD_TYPE_COLORS = {TREASURE: '#27ae60', SPECIAL_ITEM: '#2980b9', LEVEL_CARD: '#b8860b', START_ITEM: '#6c757d'};
     const CURSE_COLOR = '#9b59b6';
 
     function generateBggText() {

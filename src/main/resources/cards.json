@@ -1,16 +1,411 @@
 [
   {
-    "name": "Example Item",
-    "source": "BASE",
-    "type": "ITEM"
-  },
-  {
-    "name": "Example Special Item",
+    "name": "Rope",
     "source": "BASE",
     "type": "SPECIAL_ITEM"
   },
   {
-    "name": "Example Level Card",
+    "name": "Antidote",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Magic Sword",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Pumpkinberry Potion",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Crystal Skull",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Sleeping Wizard",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Kevin & Annabelle",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Spieder Egg",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Boots of Spider Crushing",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Bag of Gold",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Plunger",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Lucky Feather",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Flying Orb",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Quarterstaff",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Catapult",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Crossbow",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Morning Star",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Wand",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Broadsword",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Axe",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Bodyguard Cat",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Spear",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Throwing Knives",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Club",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Bow",
+    "source": "BASE",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Maul",
+    "source": "KEEP_QUESTING",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Hamish",
+    "source": "KEEP_QUESTING",
+    "type": "START_ITEM"
+  },
+  {
+    "name": "Ice Skates",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Shield of Cora",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Invisibility Cloak",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Lucky Gem",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Sword of Cora",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Backpack of Cora",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Spellbook of Control",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Cobweb Net",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Amulet of Cora",
+    "source": "KEEP_QUESTING",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Belt of Teleport",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Battleaxe",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Pike",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Flail",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Ring of Speed",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Leather Armour",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Braclet of Stinging",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Cutlass",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Healing (6)",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Healing (4)",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Healing (2)",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Shield",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Long Bow",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Warhammer",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Cloak of Immunity",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Flashlight",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Amulet of Nimbleness",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Smoke Bomb",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Chainmail",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Mace",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "X-Ray Googles",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Accuracy",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Strength",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Bravery",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Heavy Crossbow",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Boomerang",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Fancy Helmet",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Potion of Recovery",
+    "source": "KEEP_QUESTING",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Longsword",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Hourglass of Slowness",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Helmet",
+    "source": "BASE",
+    "type": "TREASURE"
+  },
+  {
+    "name": "Impersonation",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Boxing",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Long Distance Running",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Self Defence",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Meditation",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Endurance Training",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Parkour",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Orienteering",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "First Aid",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Project Management",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Motivational Speaking",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Chemistry",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Assertiveness Training",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Rope Tricks",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Sprinting",
     "source": "KEEP_QUESTING",
     "type": "LEVEL_CARD"
   }

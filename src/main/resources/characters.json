@@ -1,10 +1,50 @@
 [
   {
-    "name": "Cora",
+    "name": "Spear Women",
     "source": "BASE"
   },
   {
-    "name": "Beispiel-Charakter",
+    "name": "Halfling",
+    "source": "BASE"
+  },
+  {
+    "name": "Wizard Women",
+    "source": "BASE"
+  },
+  {
+    "name": "Healer Cat",
+    "source": "BASE"
+  },
+  {
+    "name": "Sword Girl",
+    "source": "BASE"
+  },
+  {
+    "name": "Dwarf",
+    "source": "BASE"
+  },
+  {
+    "name": "ROBO-Kettle",
+    "source": "BASE"
+  },
+  {
+    "name": "Crossbow Dude",
+    "source": "BASE"
+  },
+  {
+    "name": "Witch Boy",
+    "source": "KEEP_QUESTING"
+  },
+  {
+    "name": "Big Guy",
+    "source": "KEEP_QUESTING"
+  },
+  {
+    "name": "Rebecca Goodhammer",
+    "source": "KEEP_QUESTING"
+  },
+  {
+    "name": "Archer Lady",
     "source": "KEEP_QUESTING"
   }
 ]

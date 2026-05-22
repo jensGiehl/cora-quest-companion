@@ -1,7 +1,8 @@
 package de.agiehl.bgg.coraquestprogresstobgg.card;
 
 public enum CardType {
-    ITEM,
+    TREASURE,
     SPECIAL_ITEM,
-    LEVEL_CARD
+    LEVEL_CARD,
+    START_ITEM
 }

@@ -11,16 +11,16 @@ class CardTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void deserializesItemCard() throws Exception {
+    void deserializesTreasureCard() throws Exception {
         String json = """
-                {"name": "Sword", "source": "BASE", "type": "ITEM"}
+                {"name": "Sword", "source": "BASE", "type": "TREASURE"}
                 """;
 
         Card card = objectMapper.readValue(json, Card.class);
 
         assertThat(card.name()).isEqualTo("Sword");
         assertThat(card.source()).isEqualTo(GameSource.BASE);
-        assertThat(card.type()).isEqualTo(CardType.ITEM);
+        assertThat(card.type()).isEqualTo(CardType.TREASURE);
     }
 
     @Test

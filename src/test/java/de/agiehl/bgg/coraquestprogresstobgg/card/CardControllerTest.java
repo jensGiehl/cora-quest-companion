@@ -26,7 +26,7 @@ class CardControllerTest {
     @Test
     void returnsCardsAsJson() throws Exception {
         when(cardService.findAll()).thenReturn(List.of(
-                new Card("Sword", GameSource.BASE, CardType.ITEM),
+                new Card("Sword", GameSource.BASE, CardType.TREASURE),
                 new Card("Level 5", GameSource.KEEP_QUESTING, CardType.LEVEL_CARD)
         ));
 
@@ -34,7 +34,7 @@ class CardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Sword"))
                 .andExpect(jsonPath("$[0].source").value("BASE"))
-                .andExpect(jsonPath("$[0].type").value("ITEM"))
+                .andExpect(jsonPath("$[0].type").value("TREASURE"))
                 .andExpect(jsonPath("$[1].type").value("LEVEL_CARD"));
     }
 }

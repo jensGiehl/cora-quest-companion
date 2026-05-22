@@ -1,5 +1,11 @@
 [
   {
-    "description": "Example curse description"
+    "description": "+1 Life for Level 1 Monster"
+  },
+  {
+    "description": "+1 Life for Level 2 Monster"
+  },
+  {
+    "description": "+1 Life for Level 3 Monster"
   }
 ]
