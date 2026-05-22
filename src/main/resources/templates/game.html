@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CoraQuest - Game</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
+    <style>
+        body {
+            background-color: #f0f2f5;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            border-radius: 1rem;
+            padding: 2.5rem 1.5rem;
+        }
+        .hero .game-code {
+            font-size: clamp(3rem, 10vw, 5rem);
+            letter-spacing: 0.25em;
+            color: #e2b96f;
+            text-shadow: 0 0 20px rgba(226, 185, 111, 0.4);
+        }
+        .section-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            border: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,.07);
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6c757d;
+            margin-bottom: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            font-size: 1.1rem;
+        }
+        .quest-dropdown, .char-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .quest-dropdown .list-group-item.active,
+        .char-dropdown .list-group-item.active {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            color: white;
+        }
+        .quest-dropdown .list-group-item.active i,
+        .char-dropdown .list-group-item.active i {
+            color: white !important;
+        }
+        @media (min-width: 768px) {
+            #quest-input { font-size: 1.4rem; height: 3.5rem; }
+        }
+        .char-card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.07);
+        }
+        .char-card .card-header {
+            background: linear-gradient(90deg, #16213e, #0f3460);
+            border-radius: 0.75rem 0.75rem 0 0 !important;
+            color: #fff;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .number-input-sm { max-width: 120px; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="row justify-content-center g-3">
+        <div class="col-12 col-md-10 col-lg-8">
+
+            <!-- Hero: Code -->
+            <div class="hero text-center mb-3">
+                <p class="text-white-50 mb-1 small text-uppercase fw-semibold ls-1">CoraQuest</p>
+                <div class="game-code fw-bold font-monospace" th:text="${code}"></div>
+                <p class="text-white-50 mt-2 mb-0 small" th:text="#{game.code.label}">Game Code</p>
+            </div>
+
+            <!-- Quest -->
+            <div class="section-card mb-3">
+                <div class="section-title">
+                    <i class="bi bi-map text-primary"></i>
+                    <span th:text="#{game.quest.select}">Select Quest</span>
+                </div>
+                <div class="position-relative">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-white">
+                            <i class="bi bi-search text-secondary" id="quest-icon"></i>
+                        </span>
+                        <input type="text"
+                               id="quest-input"
+                               class="form-control border-start-0 ps-0"
+                               th:placeholder="#{game.quest.placeholder}"
+                               autofocus
+                               autocomplete="off">
+                    </div>
+                    <ul id="quest-dropdown"
+                        class="list-group position-absolute w-100 shadow quest-dropdown"
+                        style="display:none;"></ul>
+                </div>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="section-card mb-3">
+                <div class="section-title">
+                    <i class="bi bi-shield-half text-secondary"></i>
+                    <span th:text="#{game.difficulty}">Difficulty</span>
+                </div>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="difficulty" id="diff-normal" value="NORMAL" checked>
+                    <label class="btn btn-outline-primary" for="diff-normal">
+                        <i class="bi bi-shield me-1"></i>
+                        <span th:text="#{game.difficulty.normal}">Normal</span>
+                    </label>
+                    <input type="radio" class="btn-check" name="difficulty" id="diff-hard" value="HARD">
+                    <label class="btn btn-outline-danger" for="diff-hard">
+                        <i class="bi bi-skull me-1"></i>
+                        <span th:text="#{game.difficulty.hard}">Hard</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Second Wind -->
+            <div class="section-card mb-3">
+                <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                    <input class="form-check-input flex-shrink-0" type="checkbox" id="second-wind" style="width:2.5em; height:1.25em;">
+                    <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="second-wind">
+                        <i class="bi bi-wind text-info"></i>
+                        <span th:text="#{game.second.wind}">Second Wind used</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Curses -->
+            <div class="section-card mb-3">
+                <div class="section-title">
+                    <i class="bi bi-cloud-lightning-rain text-warning"></i>
+                    <span th:text="#{game.curses}">Curses</span>
+                </div>
+                <div id="curse-list" class="list-group list-group-flush rounded"></div>
+            </div>
+
+            <!-- Gold -->
+            <div class="section-card mb-3">
+                <div class="section-title">
+                    <i class="bi bi-coin text-warning"></i>
+                    <label for="remaining-gold" th:text="#{game.gold}">Remaining Gold</label>
+                </div>
+                <input type="number" class="form-control number-input-sm" id="remaining-gold" min="0" value="0">
+            </div>
+
+            <!-- Characters -->
+            <div class="mb-3">
+                <div id="character-cards" class="d-flex flex-column gap-3 mb-3"></div>
+                <button class="btn btn-primary w-100" id="add-character-btn">
+                    <i class="bi bi-person-plus me-2"></i>
+                    <span th:text="#{character.add}">Add Character</span>
+                </button>
+            </div>
+
+            <!-- Leave -->
+            <div class="text-center mt-2">
+                <a th:href="@{/leave}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    <span th:text="#{game.change}">Change Game</span>
+                </a>
+            </div>
+
+            <!-- BGG Summary -->
+            <div class="section-card mt-3">
+                <div class="section-title">
+                    <i class="bi bi-clipboard-text text-secondary"></i>
+                    <span th:text="#{summary.title}">BGG Summary</span>
+                </div>
+                <div class="d-flex gap-2 align-items-stretch">
+                    <textarea id="bgg-summary" class="form-control font-monospace small"
+                              rows="10" readonly style="resize: vertical;"></textarea>
+                    <button id="copy-btn" class="btn btn-primary d-flex flex-column align-items-center justify-content-center gap-1 px-3 flex-shrink-0">
+                        <i class="bi bi-clipboard fs-4"></i>
+                        <span th:text="#{summary.copy}">Copy</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">
+                    <i class="bi bi-trash text-danger me-2"></i>
+                    <span th:text="#{character.delete.title}">Delete Character</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" th:text="#{character.delete.confirm}">
+                Really delete this character?
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{character.delete.cancel}">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn" th:text="#{character.delete.btn}">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    const GAME_CODE = [[${code}]];
+    const i18n = {
+        playerName: [[#{character.player.name}]],
+        characterSelect: [[#{character.select}]],
+        characterPlaceholder: [[#{character.placeholder}]],
+        healthPoints: [[#{character.health}]],
+        cardsPlaceholder: [[#{character.cards.placeholder}]],
+        summaryCopied: [[#{summary.copied}]]
+    };
+</script>
+<script>
+    const ICONS = {
+        BASE: {cls: 'bi-house-fill', color: 'text-primary'},
+        KEEP_QUESTING: {cls: 'bi-snow', color: 'text-info'}
+    };
+
+    const CARD_TYPE_ICONS = {
+        ITEM: {cls: 'bi-bag-fill', color: 'text-primary'},
+        SPECIAL_ITEM: {cls: 'bi-gem', color: 'text-danger'},
+        LEVEL_CARD: {cls: 'bi-trophy-fill', color: 'text-warning'}
+    };
+
+    function iconHtml(source) {
+        const icon = ICONS[source] ?? {cls: 'bi-question', color: ''};
+        return `<i class="bi ${icon.cls} ${icon.color}"></i>`;
+    }
+
+    function cardTypeIconHtml(type) {
+        const icon = CARD_TYPE_ICONS[type] ?? {cls: 'bi-question', color: ''};
+        return `<i class="bi ${icon.cls} ${icon.color}"></i>`;
+    }
+
+    function escapeHtml(str) {
+        return String(str ?? '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // --- State ---
+
+    let allQuests = [];
+    let allCharacters = [];
+    let allCards = [];
+    let allCurses = [];
+    let questActiveIndex = -1;
+    let pendingDeleteCharId = null;
+    const charSaveTimers = {};
+
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+        if (pendingDeleteCharId !== null) {
+            await fetch(`/api/game/${GAME_CODE}/characters/${pendingDeleteCharId}`, {method: 'DELETE'});
+            document.getElementById(`char-card-${pendingDeleteCharId}`).remove();
+            pendingDeleteCharId = null;
+            updateSummary();
+        }
+        deleteModal.hide();
+    });
+
+    // --- API helpers ---
+
+    async function api(url, options = {}) {
+        const res = await fetch(url, {
+            headers: {'Content-Type': 'application/json'},
+            ...options
+        });
+        if (res.status === 204 || res.status === 200 && res.headers.get('content-length') === '0') return null;
+        if (res.ok && res.headers.get('content-type')?.includes('application/json')) return res.json();
+        return null;
+    }
+
+    // --- Data loading ---
+
+    async function loadQuests() {
+        allQuests = await api('/api/quests');
+    }
+
+    async function loadCharacters() {
+        allCharacters = await api('/api/characters');
+    }
+
+    async function loadCards() {
+        allCards = await api('/api/cards');
+    }
+
+    async function loadCurseOptions() {
+        allCurses = await api('/api/curses');
+        document.getElementById('curse-list').innerHTML = allCurses.map((c, i) => `
+            <label class="list-group-item d-flex align-items-center gap-2">
+                <input class="form-check-input flex-shrink-0" type="checkbox" data-index="${i}">
+                <span>${escapeHtml(c.description)}</span>
+            </label>`).join('');
+    }
+
+    // --- Game state persistence ---
+
+    function collectGameState() {
+        const selectedCurses = [...document.querySelectorAll('#curse-list input:checked')]
+            .map(cb => allCurses[parseInt(cb.dataset.index)]?.description)
+            .filter(Boolean);
+        return {
+            questName: document.getElementById('quest-input').value || null,
+            difficulty: document.querySelector('input[name="difficulty"]:checked')?.value ?? 'NORMAL',
+            secondWind: document.getElementById('second-wind').checked,
+            gold: parseInt(document.getElementById('remaining-gold').value) || 0,
+            curses: selectedCurses
+        };
+    }
+
+    let gameStateSaveTimer = null;
+    function scheduleGameStateSave() {
+        updateSummary();
+        clearTimeout(gameStateSaveTimer);
+        gameStateSaveTimer = setTimeout(saveGameState, 400);
+    }
+
+    async function saveGameState() {
+        await api(`/api/game/${GAME_CODE}/state`, {
+            method: 'PATCH',
+            body: JSON.stringify(collectGameState())
+        });
+    }
+
+    function applyGameState(state) {
+        if (state.questName) {
+            document.getElementById('quest-input').value = state.questName;
+            const quest = allQuests.find(q => q.name === state.questName);
+            if (quest) {
+                const icon = ICONS[quest.source] ?? {cls: 'bi-question', color: ''};
+                document.getElementById('quest-icon').className = `bi ${icon.cls} ${icon.color}`;
+            }
+        }
+
+        const diff = state.difficulty ?? 'NORMAL';
+        const diffRadio = document.querySelector(`input[name="difficulty"][value="${diff}"]`);
+        if (diffRadio) diffRadio.checked = true;
+
+        document.getElementById('second-wind').checked = state.secondWind ?? false;
+        document.getElementById('remaining-gold').value = state.gold ?? 0;
+
+        document.querySelectorAll('#curse-list input').forEach(cb => {
+            const desc = allCurses[parseInt(cb.dataset.index)]?.description;
+            cb.checked = (state.curses ?? []).includes(desc);
+        });
+
+        (state.characters ?? []).forEach(ch => renderCharacterCard(ch));
+    }
+
+    function setupGameStateListeners() {
+        document.querySelectorAll('input[name="difficulty"]').forEach(r =>
+            r.addEventListener('change', scheduleGameStateSave));
+        document.getElementById('second-wind').addEventListener('change', scheduleGameStateSave);
+        document.getElementById('remaining-gold').addEventListener('input', scheduleGameStateSave);
+        document.getElementById('curse-list').addEventListener('change', scheduleGameStateSave);
+        document.getElementById('add-character-btn').addEventListener('click', addCharacterCard);
+    }
+
+    // --- Quest autocomplete ---
+
+    function renderQuestDropdown(quests) {
+        const dropdown = document.getElementById('quest-dropdown');
+        questActiveIndex = -1;
+        if (!quests.length) { dropdown.style.display = 'none'; return; }
+        dropdown.innerHTML = quests.map(q => `
+            <li class="list-group-item list-group-item-action d-flex align-items-center gap-2"
+                data-name="${escapeHtml(q.name)}" data-source="${q.source}" role="button">
+                ${iconHtml(q.source)}<span>${escapeHtml(q.name)}</span>
+            </li>`).join('');
+        dropdown.style.display = 'block';
+    }
+
+    function setQuestActiveItem(index) {
+        const items = document.querySelectorAll('#quest-dropdown .list-group-item');
+        items.forEach(i => i.classList.remove('active'));
+        if (index >= 0 && index < items.length) {
+            items[index].classList.add('active');
+            items[index].scrollIntoView({block: 'nearest'});
+        }
+        questActiveIndex = index;
+    }
+
+    function selectQuest(name, source) {
+        document.getElementById('quest-input').value = name;
+        const icon = ICONS[source] ?? {cls: 'bi-question', color: ''};
+        document.getElementById('quest-icon').className = `bi ${icon.cls} ${icon.color}`;
+        document.getElementById('quest-dropdown').style.display = 'none';
+        questActiveIndex = -1;
+        scheduleGameStateSave();
+    }
+
+    function setupQuestAutocomplete() {
+        const input = document.getElementById('quest-input');
+        const dropdown = document.getElementById('quest-dropdown');
+
+        input.addEventListener('input', () => {
+            const term = input.value.toLowerCase();
+            renderQuestDropdown(term ? allQuests.filter(q => q.name.toLowerCase().includes(term)) : allQuests);
+        });
+        input.addEventListener('focus', () => { if (allQuests.length > 0) renderQuestDropdown(allQuests); });
+        input.addEventListener('keydown', e => {
+            const items = dropdown.querySelectorAll('.list-group-item');
+            if (dropdown.style.display === 'none' || !items.length) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); setQuestActiveItem(Math.min(questActiveIndex + 1, items.length - 1)); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); setQuestActiveItem(Math.max(questActiveIndex - 1, 0)); }
+            else if (e.key === 'Enter' && questActiveIndex >= 0) { e.preventDefault(); const item = items[questActiveIndex]; selectQuest(item.dataset.name, item.dataset.source); }
+            else if (e.key === 'Escape') { dropdown.style.display = 'none'; questActiveIndex = -1; }
+        });
+        dropdown.addEventListener('click', e => {
+            const item = e.target.closest('li[data-name]');
+            if (item) selectQuest(item.dataset.name, item.dataset.source);
+        });
+        document.addEventListener('click', e => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) { dropdown.style.display = 'none'; questActiveIndex = -1; }
+        });
+    }
+
+    // --- Character cards ---
+
+    async function addCharacterCard() {
+        const character = await api(`/api/game/${GAME_CODE}/characters`, {method: 'POST'});
+        if (character) { renderCharacterCard(character); updateSummary(); }
+    }
+
+    function renderCharacterCard(character) {
+        const id = character.id;
+        const card = document.createElement('div');
+        card.className = 'card char-card';
+        card.id = `char-card-${id}`;
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="d-flex align-items-center gap-2">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="fw-semibold small" id="char-title-${id}">${i18n.playerName}</span>
+                </span>
+                <button class="btn btn-sm btn-link text-white p-0" data-delete-char="${id}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="player-name-${id}"
+                           placeholder="${i18n.playerName}" autocomplete="off">
+                </div>
+                <div class="mb-3 position-relative">
+                    <label class="form-label small text-muted">${i18n.characterSelect}</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-secondary" id="char-icon-${id}"></i></span>
+                        <input type="text" class="form-control border-start-0 ps-0" id="char-input-${id}"
+                               placeholder="${i18n.characterPlaceholder}" autocomplete="off">
+                    </div>
+                    <ul id="char-dropdown-${id}" class="list-group position-absolute w-100 shadow char-dropdown"
+                        style="display:none; z-index:1000;"></ul>
+                </div>
+                <div class="mb-3 d-flex align-items-center gap-3">
+                    <div>
+                        <label class="form-label small text-muted d-flex align-items-center gap-1">
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            ${i18n.healthPoints}
+                        </label>
+                        <input type="number" class="form-control number-input-sm" id="health-${id}" min="0" max="12" value="1">
+                    </div>
+                </div>
+                <div class="mb-2 position-relative">
+                    <label class="form-label small text-muted d-flex align-items-center gap-1">
+                        <i class="bi bi-bag text-primary"></i>
+                        Cards
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-secondary"></i></span>
+                        <input type="text" class="form-control border-start-0 ps-0" id="card-input-${id}"
+                               placeholder="${i18n.cardsPlaceholder}" autocomplete="off">
+                    </div>
+                    <ul id="card-dropdown-${id}" class="list-group position-absolute w-100 shadow char-dropdown"
+                        style="display:none; z-index:1000;"></ul>
+                </div>
+                <ul id="selected-cards-${id}" class="list-group list-group-flush rounded"></ul>
+            </div>`;
+
+        document.getElementById('character-cards').appendChild(card);
+
+        // Populate from saved state
+        document.getElementById(`player-name-${id}`).value = character.playerName ?? '';
+        if (character.playerName) {
+            document.getElementById(`char-title-${id}`).textContent = character.playerName;
+        }
+        document.getElementById(`char-input-${id}`).value = character.characterName ?? '';
+        document.getElementById(`health-${id}`).value = character.health ?? 1;
+        if (character.characterName) {
+            const ch = allCharacters.find(c => c.name === character.characterName);
+            if (ch) {
+                const icon = ICONS[ch.source] ?? {cls: 'bi-question', color: ''};
+                document.getElementById(`char-icon-${id}`).className = `bi ${icon.cls} ${icon.color}`;
+            }
+        }
+        (character.cards ?? []).forEach(c => renderSelectedCard(id, c));
+
+        setupCharacterListeners(id);
+        setupCharacterAutocomplete(id);
+        setupCardAutocomplete(id);
+    }
+
+    function setupCharacterListeners(id) {
+        document.getElementById(`char-card-${id}`).querySelector('[data-delete-char]')
+            .addEventListener('click', () => requestDeleteChar(id));
+
+        const playerNameInput = document.getElementById(`player-name-${id}`);
+        playerNameInput.addEventListener('input', () => {
+            document.getElementById(`char-title-${id}`).textContent = playerNameInput.value || i18n.playerName;
+            scheduleCharacterSave(id);
+        });
+        document.getElementById(`health-${id}`).addEventListener('input', () => scheduleCharacterSave(id));
+    }
+
+    function scheduleCharacterSave(charId) {
+        updateSummary();
+        clearTimeout(charSaveTimers[charId]);
+        charSaveTimers[charId] = setTimeout(() => saveCharacter(charId), 400);
+    }
+
+    async function saveCharacter(charId) {
+        await api(`/api/game/${GAME_CODE}/characters/${charId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                playerName: document.getElementById(`player-name-${charId}`).value,
+                characterName: document.getElementById(`char-input-${charId}`).value,
+                health: parseInt(document.getElementById(`health-${charId}`).value) || 1
+            })
+        });
+    }
+
+    function requestDeleteChar(id) {
+        pendingDeleteCharId = id;
+        deleteModal.show();
+    }
+
+    function setupCharacterAutocomplete(id) {
+        const input = document.getElementById(`char-input-${id}`);
+        const dropdown = document.getElementById(`char-dropdown-${id}`);
+        let activeIndex = -1;
+
+        function render(chars) {
+            activeIndex = -1;
+            if (!chars.length) { dropdown.style.display = 'none'; return; }
+            dropdown.innerHTML = chars.map(c => `
+                <li class="list-group-item list-group-item-action d-flex align-items-center gap-2"
+                    data-name="${escapeHtml(c.name)}" data-source="${c.source}" role="button">
+                    ${iconHtml(c.source)}<span>${escapeHtml(c.name)}</span>
+                </li>`).join('');
+            dropdown.style.display = 'block';
+        }
+
+        function setActive(index) {
+            const items = dropdown.querySelectorAll('.list-group-item');
+            items.forEach(i => i.classList.remove('active'));
+            if (index >= 0 && index < items.length) {
+                items[index].classList.add('active');
+                items[index].scrollIntoView({block: 'nearest'});
+            }
+            activeIndex = index;
+        }
+
+        function select(name, source) {
+            input.value = name;
+            const icon = ICONS[source] ?? {cls: 'bi-question', color: ''};
+            document.getElementById(`char-icon-${id}`).className = `bi ${icon.cls} ${icon.color}`;
+            dropdown.style.display = 'none';
+            activeIndex = -1;
+            saveCharacter(id);
+            updateSummary();
+        }
+
+        input.addEventListener('input', () => {
+            const term = input.value.toLowerCase();
+            render(term ? allCharacters.filter(c => c.name.toLowerCase().includes(term)) : allCharacters);
+        });
+        input.addEventListener('focus', () => { if (allCharacters.length > 0) render(allCharacters); });
+        input.addEventListener('keydown', e => {
+            const items = dropdown.querySelectorAll('.list-group-item');
+            if (dropdown.style.display === 'none' || !items.length) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, items.length - 1)); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+            else if (e.key === 'Enter' && activeIndex >= 0) { e.preventDefault(); const item = items[activeIndex]; select(item.dataset.name, item.dataset.source); }
+            else if (e.key === 'Escape') { dropdown.style.display = 'none'; activeIndex = -1; }
+        });
+        dropdown.addEventListener('click', e => {
+            const item = e.target.closest('li[data-name]');
+            if (item) select(item.dataset.name, item.dataset.source);
+        });
+        document.addEventListener('click', e => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) { dropdown.style.display = 'none'; activeIndex = -1; }
+        });
+    }
+
+    function setupCardAutocomplete(id) {
+        const input = document.getElementById(`card-input-${id}`);
+        const dropdown = document.getElementById(`card-dropdown-${id}`);
+        let activeIndex = -1;
+
+        function render(cards) {
+            activeIndex = -1;
+            if (!cards.length) { dropdown.style.display = 'none'; return; }
+            dropdown.innerHTML = cards.map(c => `
+                <li class="list-group-item list-group-item-action d-flex align-items-center gap-2"
+                    data-name="${escapeHtml(c.name)}" data-source="${c.source}" data-type="${c.type}" role="button">
+                    ${cardTypeIconHtml(c.type)}<span>${escapeHtml(c.name)}</span>
+                </li>`).join('');
+            dropdown.style.display = 'block';
+        }
+
+        function setActive(index) {
+            const items = dropdown.querySelectorAll('.list-group-item');
+            items.forEach(i => i.classList.remove('active'));
+            if (index >= 0 && index < items.length) {
+                items[index].classList.add('active');
+                items[index].scrollIntoView({block: 'nearest'});
+            }
+            activeIndex = index;
+        }
+
+        async function selectCard(name, source, type) {
+            const card = await api(`/api/game/${GAME_CODE}/characters/${id}/cards`, {
+                method: 'POST',
+                body: JSON.stringify({cardName: name, cardSource: source, cardType: type})
+            });
+            if (card) renderSelectedCard(id, card);
+            input.value = '';
+            dropdown.style.display = 'none';
+            activeIndex = -1;
+            updateSummary();
+        }
+
+        input.addEventListener('input', () => {
+            const term = input.value.toLowerCase();
+            render(term ? allCards.filter(c => c.name.toLowerCase().includes(term)) : allCards);
+        });
+        input.addEventListener('focus', () => { if (allCards.length > 0) render(allCards); });
+        input.addEventListener('keydown', e => {
+            const items = dropdown.querySelectorAll('.list-group-item');
+            if (dropdown.style.display === 'none' || !items.length) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, items.length - 1)); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+            else if (e.key === 'Enter' && activeIndex >= 0) { e.preventDefault(); const item = items[activeIndex]; selectCard(item.dataset.name, item.dataset.source, item.dataset.type); }
+            else if (e.key === 'Escape') { dropdown.style.display = 'none'; activeIndex = -1; }
+        });
+        dropdown.addEventListener('click', e => {
+            const item = e.target.closest('li[data-name]');
+            if (item) selectCard(item.dataset.name, item.dataset.source, item.dataset.type);
+        });
+        document.addEventListener('click', e => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) { dropdown.style.display = 'none'; activeIndex = -1; }
+        });
+    }
+
+    function renderSelectedCard(charId, card) {
+        const list = document.getElementById(`selected-cards-${charId}`);
+        const li = document.createElement('li');
+        li.id = `player-card-${card.id}`;
+        li.dataset.cardType = card.cardType;
+        li.className = 'list-group-item d-flex align-items-center justify-content-between py-1 px-0';
+        li.innerHTML = `
+            <div class="d-flex align-items-center gap-2">
+                ${cardTypeIconHtml(card.cardType)}
+                <span>${escapeHtml(card.cardName)}</span>
+            </div>
+            <button class="btn btn-sm btn-link text-danger p-0" data-delete-card="${card.id}" data-char-id="${charId}">
+                <i class="bi bi-trash"></i>
+            </button>`;
+        li.querySelector('[data-delete-card]').addEventListener('click', () => removeCard(charId, card.id));
+        list.appendChild(li);
+    }
+
+    async function removeCard(charId, cardId) {
+        await api(`/api/game/${GAME_CODE}/characters/${charId}/cards/${cardId}`, {method: 'DELETE'});
+        document.getElementById(`player-card-${cardId}`).remove();
+        updateSummary();
+    }
+
+    // --- BGG Summary ---
+
+    const CARD_TYPE_LABELS = {ITEM: 'Item', SPECIAL_ITEM: 'Special Item', LEVEL_CARD: 'Level Card'};
+    const CARD_TYPE_ORDER = {ITEM: 0, SPECIAL_ITEM: 1, LEVEL_CARD: 2};
+    const CARD_TYPE_COLORS = {ITEM: '#27ae60', SPECIAL_ITEM: '#2980b9', LEVEL_CARD: '#b8860b'};
+    const CURSE_COLOR = '#9b59b6';
+
+    function generateBggText() {
+        const lines = [];
+
+        const questName = document.getElementById('quest-input').value.trim();
+        if (questName) lines.push(`[b]Quest:[/b] ${questName}`);
+
+        const diff = document.querySelector('input[name="difficulty"]:checked')?.value ?? 'NORMAL';
+        lines.push(`[b]Difficulty:[/b] ${diff === 'HARD' ? 'Hard' : 'Normal'}`);
+
+        if (document.getElementById('second-wind').checked) lines.push('[b]Second Wind:[/b] Used');
+
+        const gold = parseInt(document.getElementById('remaining-gold').value) || 0;
+        lines.push(`[b]Remaining Gold:[/b] ${gold}`);
+
+        const selectedCurses = [...document.querySelectorAll('#curse-list input:checked')]
+            .map(cb => allCurses[parseInt(cb.dataset.index)]?.description).filter(Boolean);
+        if (selectedCurses.length > 0) {
+            lines.push(`[b]Curses:[/b]`);
+            selectedCurses.forEach(c => lines.push(`- [color=${CURSE_COLOR}]${c}[/color]`));
+        }
+
+        const charCards = [...document.querySelectorAll('[id^="char-card-"]')];
+        if (charCards.length > 0) {
+            charCards.forEach(charCard => {
+                const id = charCard.id.replace('char-card-', '');
+                const playerName = document.getElementById(`player-name-${id}`)?.value.trim();
+                const charName = document.getElementById(`char-input-${id}`)?.value.trim();
+                const health = document.getElementById(`health-${id}`)?.value ?? '1';
+
+                lines.push('');
+                const nameParts = [playerName || null, charName ? `(${charName})` : null].filter(Boolean);
+                lines.push(`[b]${nameParts.join(' ') || 'Character'}[/b] — Remaining Health: ${health}`);
+
+                const cardEls = [...document.querySelectorAll(`#selected-cards-${id} li`)];
+                if (cardEls.length > 0) {
+                    const sorted = cardEls.slice().sort((a, b) => {
+                        const typeOrder = (CARD_TYPE_ORDER[a.dataset.cardType] ?? 99) - (CARD_TYPE_ORDER[b.dataset.cardType] ?? 99);
+                        if (typeOrder !== 0) return typeOrder;
+                        return (a.querySelector('span')?.textContent ?? '').localeCompare(b.querySelector('span')?.textContent ?? '');
+                    });
+                    sorted.forEach(li => {
+                        const name = li.querySelector('span')?.textContent.trim();
+                        const type = CARD_TYPE_LABELS[li.dataset.cardType] ?? '';
+                        const color = CARD_TYPE_COLORS[li.dataset.cardType] ?? '';
+                        lines.push(`- [color=${color}]${name}${type ? ` (${type})` : ''}[/color]`);
+                    });
+                }
+            });
+        }
+
+        return lines.join('\n');
+    }
+
+    function updateSummary() {
+        const el = document.getElementById('bgg-summary');
+        if (el) el.value = generateBggText();
+    }
+
+    document.getElementById('copy-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('copy-btn');
+        await navigator.clipboard.writeText(document.getElementById('bgg-summary').value);
+        const icon = btn.querySelector('i');
+        const span = btn.querySelector('span');
+        icon.className = 'bi bi-clipboard-check fs-4';
+        span.textContent = i18n.summaryCopied;
+        btn.classList.replace('btn-primary', 'btn-success');
+        setTimeout(() => {
+            icon.className = 'bi bi-clipboard fs-4';
+            span.textContent = btn.dataset.origLabel;
+            btn.classList.replace('btn-success', 'btn-primary');
+        }, 2000);
+    });
+
+    // --- Init ---
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.dataset.origLabel = copyBtn.querySelector('span').textContent;
+
+        await Promise.all([loadQuests(), loadCharacters(), loadCurseOptions(), loadCards()]);
+        const state = await api(`/api/game/${GAME_CODE}/state`);
+        if (state) applyGameState(state);
+        setupQuestAutocomplete();
+        setupGameStateListeners();
+        updateSummary();
+    });
+</script>
+</body>
+</html>

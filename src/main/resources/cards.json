@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Example Item",
+    "source": "BASE",
+    "type": "ITEM"
+  },
+  {
+    "name": "Example Special Item",
+    "source": "BASE",
+    "type": "SPECIAL_ITEM"
+  },
+  {
+    "name": "Example Level Card",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
+  }
+]

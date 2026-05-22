@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Example Quest",
+    "source": "BASE"
+  },
+  {
+    "name": "Example Expansion Quest",
+    "source": "KEEP_QUESTING"
+  }
+]

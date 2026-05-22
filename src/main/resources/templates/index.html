@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CoraQuest Progress Tracker</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+
+            <h1 class="text-center mb-4">CoraQuest</h1>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Join a Game</h5>
+                    <form th:action="@{/join}" method="post">
+                        <div class="mb-3">
+                            <input type="text"
+                                   name="code"
+                                   class="form-control form-control-lg text-center text-uppercase"
+                                   maxlength="4"
+                                   placeholder="Enter code"
+                                   autocomplete="off"
+                                   autofocus
+                                   required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Join</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">New Game</h5>
+                    <form th:action="@{/create}" method="post">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Create Game</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
