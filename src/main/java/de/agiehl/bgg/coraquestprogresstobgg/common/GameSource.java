@@ -2,5 +2,6 @@ package de.agiehl.bgg.coraquestprogresstobgg.common;
 
 public enum GameSource {
     BASE,
-    KEEP_QUESTING
+    KEEP_QUESTING,
+    DOWNLOAD
 }
