@@ -76,5 +76,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            # Start application in background
-            nohup /opt/run-cora.sh > /dev/null 2>&1 &
+            /opt/run-cora.sh
