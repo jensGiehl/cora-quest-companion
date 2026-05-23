@@ -76,4 +76,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            /opt/run-cora.sh
+            bash /opt/run-cora.sh
