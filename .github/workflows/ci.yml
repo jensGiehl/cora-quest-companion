@@ -42,17 +42,7 @@ jobs:
           name: app-jar
           path: artifact
 
-      - name: Copy JAR to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: artifact/coraquest-progress-to-bgg-0.0.1.jar
-          target: /opt/
-          strip_components: 1
-
-      - name: Restart application
+      - name: Stop running application
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -67,6 +57,24 @@ jobs:
             
             # Force kill if still running
             pkill -9 -f "coraquest-progress-to-bgg.*\.jar" || echo "Process already stopped"
-            
+
+      - name: Copy JAR to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: artifact/coraquest-progress-to-bgg-0.0.1.jar
+          target: /opt/
+          strip_components: 1
+          overwrite: true
+
+      - name: Start application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
             # Start application in background
-            nohup /opt/runCoraQuest.sh > /dev/null 2>&1 &
+            nohup /opt/run-cora.sh > /dev/null 2>&1 &
