@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           source: artifact/coraquest-progress-to-bgg-0.0.1.jar
-          target: /opt/
+          target: /home/cora/
           strip_components: 1
           overwrite: true
 
