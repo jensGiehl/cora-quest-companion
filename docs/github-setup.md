@@ -3,13 +3,12 @@
 ## CI/CD via GitHub Actions
 
 The workflow at `.github/workflows/ci.yml` runs automatically on every push to
-`main`. It has three jobs that run in sequence:
+`master`. It has two jobs that run in sequence:
 
 | Job | Runner | What it does |
 |-----|--------|--------------|
-| **Build & Test** | `ubuntu-latest` (JVM) | Compiles with Maven and runs the full test suite |
-| **Native Image** | `ubuntu-latest` (GraalVM) | Builds a self-contained Linux x64 binary (only runs if tests pass) |
-| **Deploy** | `ubuntu-latest` | Copies the binary to the server via SCP and restarts the systemd service (only runs if native image build succeeds) |
+| **Build & Test** | `ubuntu-latest` (JVM) | Compiles with Maven, runs the full test suite and packages the application as a JAR file. |
+| **Deploy** | `ubuntu-latest` | Copies the JAR to the server via SCP and restarts the application. |
 
 ## Required secrets
 
@@ -52,7 +51,7 @@ sudo mkdir -p /opt/coraquest
 sudo chown deploy:deploy /opt/coraquest
 ```
 
-The deploy job will write the binary here. The data directory for the
+The deploy job will write the JAR here. The data directory for the
 file-based database (`/opt/coraquest/data/`) is created automatically by the
 application on first start.
 
@@ -75,55 +74,21 @@ Test from your local machine before proceeding:
 ssh -i deploy_key deploy@<DEPLOY_HOST> "echo OK"
 ```
 
-### 4. Install the systemd service
+### 4. Create run script
 
-Create `/etc/systemd/system/coraquest.service` as root:
+Create `/opt/run-cora.sh` as root:
 
 ```bash
-sudo tee /etc/systemd/system/coraquest.service > /dev/null << 'EOF'
-[Unit]
-Description=CoraQuest Progress to BGG
-After=network.target
-
-[Service]
-User=deploy
-WorkingDirectory=/opt/coraquest
-ExecStart=/opt/coraquest/coraquest-progress-to-bgg
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
+sudo tee /opt/run-cora.sh > /dev/null << 'EOF'
+#!/bin/bash
+java -jar /opt/coraquest-progress-to-bgg-0.0.1.jar
 EOF
 ```
 
-Enable it so it starts automatically after a reboot:
-
+Make it executable:
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable coraquest
+sudo chmod +x /opt/run-cora.sh
 ```
-
-Do **not** start the service yet — the binary does not exist until the first
-deploy runs.
-
-### 5. Grant passwordless sudo for the restart command
-
-Create a dedicated sudoers drop-in file:
-
-```bash
-sudo tee /etc/sudoers.d/coraquest > /dev/null << 'EOF'
-deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart coraquest
-EOF
-sudo chmod 440 /etc/sudoers.d/coraquest
-```
-
-Verify the file is valid (a syntax error here can lock you out of sudo):
-
-```bash
-sudo visudo -c -f /etc/sudoers.d/coraquest
-```
-
-Expected output: `/etc/sudoers.d/coraquest: parsed OK`
 
 ## Dependabot
 
@@ -152,7 +117,7 @@ within a few minutes.
 ### Handling Dependabot PRs
 
 Dependabot PRs run the full CI pipeline. Because the deploy job runs on every
-push to `main`, **do not merge Dependabot PRs directly into `main`** without
+push to `master`, **do not merge Dependabot PRs directly into `master`** without
 reviewing the changes — a merged PR triggers a deploy to the production server.
 
 If branch protection is configured (see below), the `Build & Test` check must
@@ -161,11 +126,11 @@ dependency bumps.
 
 ## Recommended branch protection (optional)
 
-Go to **Settings → Branches → Add branch protection rule** for `main` and enable:
+Go to **Settings → Branches → Add branch protection rule** for `master` and enable:
 
 - **Require status checks to pass before merging**
   - Add `Build & Test` as a required check
 - **Require branches to be up to date before merging**
 
-The slower native image and deploy jobs are not required to block pull request
+The deploy job is not required to block pull request
 merges.
