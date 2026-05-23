@@ -408,5 +408,10 @@
     "name": "Sprinting",
     "source": "KEEP_QUESTING",
     "type": "LEVEL_CARD"
+  },
+  {
+    "name": "Darts",
+    "source": "KEEP_QUESTING",
+    "type": "LEVEL_CARD"
   }
 ]
