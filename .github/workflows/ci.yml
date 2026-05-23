@@ -50,13 +50,13 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             # Graceful shutdown (SIGTERM)
-            pkill -15 -f "coraquest-progress-to-bgg.*\.jar" || echo "Process not running"
+            pkill -15 -f "[c]oraquest-progress-to-bgg.*\.jar" || echo "Process not running"
             
             # Wait a few seconds for graceful shutdown
             sleep 5
             
             # Force kill if still running
-            pkill -9 -f "coraquest-progress-to-bgg.*\.jar" || echo "Process already stopped"
+            pkill -9 -f "[c]oraquest-progress-to-bgg.*\.jar" || echo "Process already stopped"
 
       - name: Copy JAR to server
         uses: appleboy/scp-action@v0.1.7
