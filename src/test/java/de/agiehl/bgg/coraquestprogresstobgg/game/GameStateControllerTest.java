@@ -2,9 +2,9 @@ package de.agiehl.bgg.coraquestprogresstobgg.game;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,13 +23,13 @@ class GameStateControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private GameService gameService;
 
-    @MockBean
+    @MockitoBean
     private GameStateService gameStateService;
 
-    private final Game knownGame = new Game(1L, "ABCD", null, "NORMAL", "SHORT", null, 0);
+    private final Game knownGame = new Game(1L, "ABCD", null, "NORMAL", null, null, 0);
 
     @Test
     void getStateReturns404ForUnknownCode() throws Exception {
@@ -50,7 +50,23 @@ class GameStateControllerTest {
                 .andExpect(jsonPath("$.questName").value("Quest 1"))
                 .andExpect(jsonPath("$.difficulty").value("NORMAL"))
                 .andExpect(jsonPath("$.gold").value(3))
-                .andExpect(jsonPath("$.curses[0]").value("Poison"));
+                .andExpect(jsonPath("$.curses[0]").value("Poison"))
+                .andExpect(jsonPath("$.secondWindCharacterId").isEmpty());
+    }
+
+    @Test
+    void getStateReturnsGameStateWithSecondWind() throws Exception {
+        when(gameService.findByCode("ABCD")).thenReturn(Optional.of(knownGame));
+        when(gameStateService.getState("ABCD")).thenReturn(
+                new GameStateResponse("Quest 1", "NORMAL", "SHORT", 1L, 3, List.of("Poison"), List.of()));
+
+        mockMvc.perform(get("/api/game/ABCD/state"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.questName").value("Quest 1"))
+                .andExpect(jsonPath("$.difficulty").value("NORMAL"))
+                .andExpect(jsonPath("$.gold").value(3))
+                .andExpect(jsonPath("$.curses[0]").value("Poison"))
+                .andExpect(jsonPath("$.secondWindCharacterId").value(1L));
     }
 
     @Test
@@ -59,7 +75,7 @@ class GameStateControllerTest {
 
         mockMvc.perform(patch("/api/game/ABCD/state")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"questName\":\"Quest 1\",\"difficulty\":\"HARD\",\"gameLength\":\"LONG\",\"secondWindCharacterId\":1,\"gold\":5,\"curses\":[]}"))
+                        .content("{\"questName\":\"Quest 1\",\"difficulty\":\"HARD\",\"secondWindCharacterId\":1,\"gold\":5,\"curses\":[]}"))
                 .andExpect(status().isNoContent());
 
         verify(gameStateService).updateState(eq("ABCD"), any(GameStateUpdate.class));

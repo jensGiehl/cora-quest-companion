@@ -45,7 +45,7 @@ class GameServiceTest {
 
     @Test
     void findByCodeNormalizesInputToUppercase() {
-        Game game = new Game(1L, "ABCD", null, "NORMAL", false, 0);
+        Game game = new Game(1L, "ABCD", null, "NORMAL", null, null, 0);
         when(gameRepository.findByCode("ABCD")).thenReturn(Optional.of(game));
 
         assertThat(gameService.findByCode("abcd")).contains(game);

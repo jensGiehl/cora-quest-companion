@@ -32,7 +32,7 @@ class GameControllerTest {
 
     @Test
     void indexRedirectsToGameWhenCookieIsValid() throws Exception {
-        when(gameService.findByCode("ABCD")).thenReturn(Optional.of(new Game(1L, "ABCD", null, "NORMAL", false, 0)));
+        when(gameService.findByCode("ABCD")).thenReturn(Optional.of(new Game(1L, "ABCD", null, "NORMAL", null, null, 0)));
 
         mockMvc.perform(get("/").cookie(new Cookie("gameCode", "ABCD")))
                 .andExpect(status().is3xxRedirection())
@@ -50,7 +50,7 @@ class GameControllerTest {
 
     @Test
     void createRedirectsToNewGame() throws Exception {
-        when(gameService.createGame()).thenReturn(new Game(1L, "ABCD", null, "NORMAL", false, 0));
+        when(gameService.createGame()).thenReturn(new Game(1L, "ABCD", null, "NORMAL", null, null, 0));
 
         mockMvc.perform(post("/create"))
                 .andExpect(status().is3xxRedirection())
@@ -59,7 +59,7 @@ class GameControllerTest {
 
     @Test
     void joinRedirectsToGameOnValidCode() throws Exception {
-        when(gameService.findByCode("ABCD")).thenReturn(Optional.of(new Game(1L, "ABCD", null, "NORMAL", false, 0)));
+        when(gameService.findByCode("ABCD")).thenReturn(Optional.of(new Game(1L, "ABCD", null, "NORMAL", null, null, 0)));
 
         mockMvc.perform(post("/join").param("code", "ABCD"))
                 .andExpect(status().is3xxRedirection())
