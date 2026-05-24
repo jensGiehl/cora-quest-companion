@@ -28,7 +28,7 @@ class GameStateServiceTest {
     @InjectMocks
     private GameStateService gameStateService;
 
-    private final Game game = new Game(1L, "ABCD", null, "NORMAL", false, 0);
+    private final Game game = new Game(1L, "ABCD", null, "NORMAL", "SHORT", null, 0);
 
     @Test
     void getStateReturnsFullState() {
@@ -48,12 +48,12 @@ class GameStateServiceTest {
         when(gameRepository.findByCode("ABCD")).thenReturn(Optional.of(game));
         when(gameRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        var update = new GameStateUpdate("Quest 1", "HARD", true, 5, List.of("Poison", "Blind"));
+        var update = new GameStateUpdate("Quest 1", "HARD", "LONG", 1L, 5, List.of("Poison", "Blind"));
         gameStateService.updateState("ABCD", update);
 
         verify(gameRepository).save(argThat(g ->
                 "Quest 1".equals(g.getQuestName()) && "HARD".equals(g.getDifficulty())
-                && g.isSecondWind() && g.getGold() == 5));
+                && g.getSecondWindCharacterId() == 1L && g.getGold() == 5));
         verify(gameCurseRepository).deleteByGameId(1L);
         verify(gameCurseRepository, times(2)).save(any(GameCurse.class));
     }

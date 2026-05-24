@@ -2,9 +2,9 @@ package de.agiehl.bgg.coraquestprogresstobgg.game;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,13 +23,13 @@ class GameStateControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private GameService gameService;
 
-    @MockitoBean
+    @MockBean
     private GameStateService gameStateService;
 
-    private final Game knownGame = new Game(1L, "ABCD", null, "NORMAL", false, 0);
+    private final Game knownGame = new Game(1L, "ABCD", null, "NORMAL", "SHORT", null, 0);
 
     @Test
     void getStateReturns404ForUnknownCode() throws Exception {
@@ -43,7 +43,7 @@ class GameStateControllerTest {
     void getStateReturnsGameState() throws Exception {
         when(gameService.findByCode("ABCD")).thenReturn(Optional.of(knownGame));
         when(gameStateService.getState("ABCD")).thenReturn(
-                new GameStateResponse("Quest 1", "NORMAL", false, 3, List.of("Poison"), List.of()));
+                new GameStateResponse("Quest 1", "NORMAL", "SHORT", null, 3, List.of("Poison"), List.of()));
 
         mockMvc.perform(get("/api/game/ABCD/state"))
                 .andExpect(status().isOk())
@@ -59,7 +59,7 @@ class GameStateControllerTest {
 
         mockMvc.perform(patch("/api/game/ABCD/state")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"questName\":\"Quest 1\",\"difficulty\":\"HARD\",\"secondWind\":true,\"gold\":5,\"curses\":[]}"))
+                        .content("{\"questName\":\"Quest 1\",\"difficulty\":\"HARD\",\"gameLength\":\"LONG\",\"secondWindCharacterId\":1,\"gold\":5,\"curses\":[]}"))
                 .andExpect(status().isNoContent());
 
         verify(gameStateService).updateState(eq("ABCD"), any(GameStateUpdate.class));
