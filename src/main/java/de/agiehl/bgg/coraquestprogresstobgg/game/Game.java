@@ -18,6 +18,6 @@ public class Game {
     private String questName;
     private String difficulty;
     private String gameLength;
-    private boolean secondWind;
+    private Long secondWindCharacterId;
     private int gold;
 }

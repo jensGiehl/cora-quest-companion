@@ -155,13 +155,13 @@
 
             <!-- Second Wind -->
             <div class="section-card mb-3">
-                <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
-                    <input class="form-check-input flex-shrink-0" type="checkbox" id="second-wind" style="width:2.5em; height:1.25em;">
-                    <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="second-wind">
-                        <i class="bi bi-wind text-info"></i>
-                        <span th:text="#{game.second.wind}">Second Wind used</span>
-                    </label>
+                <div class="section-title">
+                    <i class="bi bi-wind text-info"></i>
+                    <span th:text="#{game.second.wind}">Second Wind used</span>
                 </div>
+                <select class="form-select" id="second-wind-character">
+                    <option value="" th:text="#{game.second.wind.none}">None</option>
+                </select>
             </div>
 
             <!-- Curses -->
@@ -250,7 +250,8 @@
         characterPlaceholder: [[#{character.placeholder}]],
         healthPoints: [[#{character.health}]],
         cardsPlaceholder: [[#{character.cards.placeholder}]],
-        summaryCopied: [[#{summary.copied}]]
+        summaryCopied: [[#{summary.copied}]],
+        secondWindNone: [[#{game.second.wind.none}]]
     };
 </script>
 <script>
@@ -300,6 +301,7 @@
             await fetch(`/api/game/${GAME_CODE}/characters/${pendingDeleteCharId}`, {method: 'DELETE'});
             document.getElementById(`char-card-${pendingDeleteCharId}`).remove();
             pendingDeleteCharId = null;
+            updateSecondWindSelector();
             updateSummary();
         }
         deleteModal.hide();
@@ -359,7 +361,7 @@
             questName: document.getElementById('quest-input').value || null,
             difficulty: document.querySelector('input[name="difficulty"]:checked')?.value ?? 'NORMAL',
             gameLength: document.querySelector('input[name="gameLength"]:checked')?.value ?? 'SHORT',
-            secondWind: document.getElementById('second-wind').checked,
+            secondWindCharacterId: document.getElementById('second-wind-character').value || null,
             gold: parseInt(document.getElementById('remaining-gold').value) || 0,
             curses: selectedCurses
         };
@@ -397,7 +399,6 @@
         const lenRadio = document.querySelector(`input[name="gameLength"][value="${len}"]`);
         if (lenRadio) lenRadio.checked = true;
 
-        document.getElementById('second-wind').checked = state.secondWind ?? false;
         document.getElementById('remaining-gold').value = state.gold ?? 0;
 
         document.querySelectorAll('#curse-list input').forEach(cb => {
@@ -406,6 +407,12 @@
         });
 
         (state.characters ?? []).forEach(ch => renderCharacterCard(ch));
+
+        updateSecondWindSelector();
+        const secondWindSelect = document.getElementById('second-wind-character');
+        if (state.secondWindCharacterId) {
+            secondWindSelect.value = state.secondWindCharacterId;
+        }
     }
 
     function setupGameStateListeners() {
@@ -413,7 +420,7 @@
             r.addEventListener('change', scheduleGameStateSave));
         document.querySelectorAll('input[name="gameLength"]').forEach(r =>
             r.addEventListener('change', scheduleGameStateSave));
-        document.getElementById('second-wind').addEventListener('change', scheduleGameStateSave);
+        document.getElementById('second-wind-character').addEventListener('change', scheduleGameStateSave);
         document.getElementById('remaining-gold').addEventListener('input', scheduleGameStateSave);
         document.getElementById('curse-list').addEventListener('change', scheduleGameStateSave);
         document.getElementById('add-character-btn').addEventListener('click', addCharacterCard);
@@ -482,7 +489,11 @@
 
     async function addCharacterCard() {
         const character = await api(`/api/game/${GAME_CODE}/characters`, {method: 'POST'});
-        if (character) { renderCharacterCard(character); updateSummary(); }
+        if (character) {
+            renderCharacterCard(character);
+            updateSecondWindSelector();
+            updateSummary();
+        }
     }
 
     function renderCharacterCard(character) {
@@ -571,6 +582,7 @@
         playerNameInput.addEventListener('input', () => {
             document.getElementById(`char-title-${id}`).textContent = playerNameInput.value || i18n.playerName;
             scheduleCharacterSave(id);
+            updateSecondWindSelector();
         });
         document.getElementById(`health-${id}`).addEventListener('input', () => scheduleCharacterSave(id));
     }
@@ -631,6 +643,7 @@
             activeIndex = -1;
             saveCharacter(id);
             updateSummary();
+            updateSecondWindSelector();
         }
 
         input.addEventListener('input', () => {
@@ -739,6 +752,29 @@
         updateSummary();
     }
 
+    // --- Second Wind ---
+
+    function updateSecondWindSelector() {
+        const select = document.getElementById('second-wind-character');
+        const currentValue = select.value;
+        const options = ['<option value="">' + i18n.secondWindNone + '</option>'];
+
+        document.querySelectorAll('[id^="char-card-"]').forEach(charCard => {
+            const id = charCard.id.replace('char-card-', '');
+            const playerName = document.getElementById(`player-name-${id}`)?.value.trim();
+            const charName = document.getElementById(`char-input-${id}`)?.value.trim();
+
+            if (charName) {
+                const nameParts = [playerName, charName].filter(Boolean);
+                const displayName = nameParts.join(' ') || `Character ${id}`;
+                options.push(`<option value="${id}">${escapeHtml(displayName)}</option>`);
+            }
+        });
+
+        select.innerHTML = options.join('');
+        select.value = currentValue;
+    }
+
     // --- BGG Summary ---
 
     const CARD_TYPE_LABELS = {TREASURE: 'Treasure', SPECIAL_ITEM: 'Special Item', LEVEL_CARD: 'Level Card', START_ITEM: 'Start Item'};
@@ -758,7 +794,14 @@
         const len = document.querySelector('input[name="gameLength"]:checked')?.value ?? 'SHORT';
         lines.push(`[b]Game Length:[/b] ${len === 'LONG' ? 'Long' : 'Short'}`);
 
-        if (document.getElementById('second-wind').checked) lines.push('[b]Second Wind:[/b] Used');
+        const secondWindCharId = document.getElementById('second-wind-character').value;
+        if (secondWindCharId) {
+            const select = document.getElementById('second-wind-character');
+            const selectedOption = select.options[select.selectedIndex];
+            if (selectedOption) {
+                lines.push(`[b]Second Wind:[/b] Used by ${selectedOption.text}`);
+            }
+        }
 
         const gold = parseInt(document.getElementById('remaining-gold').value) || 0;
         lines.push(`[b]Remaining Gold:[/b] ${gold}`);
@@ -779,7 +822,7 @@
                 const health = document.getElementById(`health-${id}`)?.value ?? '1';
 
                 lines.push('');
-                const nameParts = [playerName || null, charName ? `(${charName})` : null].filter(Boolean);
+                const nameParts = [playerName, charName].filter(Boolean);
                 lines.push(`[b]${nameParts.join(' ') || 'Character'}[/b] — Remaining Health: ${health}`);
 
                 const cardEls = [...document.querySelectorAll(`#selected-cards-${id} li`)];

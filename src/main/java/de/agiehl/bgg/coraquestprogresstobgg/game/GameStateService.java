@@ -22,7 +22,7 @@ public class GameStateService {
                 .stream().map(GameCurse::getCurseDescription).toList();
         List<PlayerCharacterResponse> characters = playerCharacterRepository.findByGameId(game.getId())
                 .stream().map(this::toCharacterResponse).toList();
-        return new GameStateResponse(game.getQuestName(), game.getDifficulty(), game.getGameLength(), game.isSecondWind(), game.getGold(), curses, characters);
+        return new GameStateResponse(game.getQuestName(), game.getDifficulty(), game.getGameLength(), game.getSecondWindCharacterId(), game.getGold(), curses, characters);
     }
 
     public void updateState(String code, GameStateUpdate update) {
@@ -30,7 +30,7 @@ public class GameStateService {
         game.setQuestName(update.questName());
         game.setDifficulty(update.difficulty() != null ? update.difficulty() : "NORMAL");
         game.setGameLength(update.gameLength() != null ? update.gameLength() : "SHORT");
-        game.setSecondWind(update.secondWind());
+        game.setSecondWindCharacterId(update.secondWindCharacterId());
         game.setGold(update.gold());
         gameRepository.save(game);
 
