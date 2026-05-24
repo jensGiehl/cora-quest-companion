@@ -17,6 +17,7 @@ public class Game {
     private String code;
     private String questName;
     private String difficulty;
+    private String gameLength;
     private boolean secondWind;
     private int gold;
 }

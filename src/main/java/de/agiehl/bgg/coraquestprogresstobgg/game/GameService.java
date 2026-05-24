@@ -24,6 +24,7 @@ public class GameService {
         Game game = new Game();
         game.setCode(code);
         game.setDifficulty("NORMAL");
+        game.setGameLength("SHORT");
         return gameRepository.save(game);
     }
 

@@ -133,6 +133,26 @@
                 </div>
             </div>
 
+            <!-- Game Length -->
+            <div class="section-card mb-3">
+                <div class="section-title">
+                    <i class="bi bi-clock text-secondary"></i>
+                    <span th:text="#{game.length}">Game Length</span>
+                </div>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="gameLength" id="len-short" value="SHORT" checked>
+                    <label class="btn btn-outline-primary" for="len-short">
+                        <i class="bi bi-hourglass-split me-1"></i>
+                        <span th:text="#{game.length.short}">Short</span>
+                    </label>
+                    <input type="radio" class="btn-check" name="gameLength" id="len-long" value="LONG">
+                    <label class="btn btn-outline-primary" for="len-long">
+                        <i class="bi bi-hourglass-bottom me-1"></i>
+                        <span th:text="#{game.length.long}">Long</span>
+                    </label>
+                </div>
+            </div>
+
             <!-- Second Wind -->
             <div class="section-card mb-3">
                 <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
@@ -338,6 +358,7 @@
         return {
             questName: document.getElementById('quest-input').value || null,
             difficulty: document.querySelector('input[name="difficulty"]:checked')?.value ?? 'NORMAL',
+            gameLength: document.querySelector('input[name="gameLength"]:checked')?.value ?? 'SHORT',
             secondWind: document.getElementById('second-wind').checked,
             gold: parseInt(document.getElementById('remaining-gold').value) || 0,
             curses: selectedCurses
@@ -372,6 +393,10 @@
         const diffRadio = document.querySelector(`input[name="difficulty"][value="${diff}"]`);
         if (diffRadio) diffRadio.checked = true;
 
+        const len = state.gameLength ?? 'SHORT';
+        const lenRadio = document.querySelector(`input[name="gameLength"][value="${len}"]`);
+        if (lenRadio) lenRadio.checked = true;
+
         document.getElementById('second-wind').checked = state.secondWind ?? false;
         document.getElementById('remaining-gold').value = state.gold ?? 0;
 
@@ -385,6 +410,8 @@
 
     function setupGameStateListeners() {
         document.querySelectorAll('input[name="difficulty"]').forEach(r =>
+            r.addEventListener('change', scheduleGameStateSave));
+        document.querySelectorAll('input[name="gameLength"]').forEach(r =>
             r.addEventListener('change', scheduleGameStateSave));
         document.getElementById('second-wind').addEventListener('change', scheduleGameStateSave);
         document.getElementById('remaining-gold').addEventListener('input', scheduleGameStateSave);
@@ -727,6 +754,9 @@
 
         const diff = document.querySelector('input[name="difficulty"]:checked')?.value ?? 'NORMAL';
         lines.push(`[b]Difficulty:[/b] ${diff === 'HARD' ? 'Hard' : 'Normal'}`);
+
+        const len = document.querySelector('input[name="gameLength"]:checked')?.value ?? 'SHORT';
+        lines.push(`[b]Game Length:[/b] ${len === 'LONG' ? 'Long' : 'Short'}`);
 
         if (document.getElementById('second-wind').checked) lines.push('[b]Second Wind:[/b] Used');
 
