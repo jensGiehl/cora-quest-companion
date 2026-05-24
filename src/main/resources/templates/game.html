@@ -761,13 +761,10 @@
 
         document.querySelectorAll('[id^="char-card-"]').forEach(charCard => {
             const id = charCard.id.replace('char-card-', '');
-            const playerName = document.getElementById(`player-name-${id}`)?.value.trim();
             const charName = document.getElementById(`char-input-${id}`)?.value.trim();
 
             if (charName) {
-                const nameParts = [playerName, charName].filter(Boolean);
-                const displayName = nameParts.join(' ') || `Character ${id}`;
-                options.push(`<option value="${id}">${escapeHtml(displayName)}</option>`);
+                options.push(`<option value="${id}">${escapeHtml(charName)}</option>`);
             }
         });
 
